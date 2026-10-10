@@ -1,0 +1,459 @@
+<title>MyFolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;700;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a poster-style headline across the full width, then a copy column beside a collage of three live demos (website, Telegram bot chat, script terminal) so the work is shown, not described. Below: oversized service rows that flood cobalt on hover, one full-bleed cobalt band, and a huge contact link. Deliberately light and single-look. */
+:root {
+  --paper: #eaecf3;
+  --surface: #f5f6fa;
+  --white: #ffffff;
+  --ink: #0b0e1a;
+  --muted: #565b6e;
+  --line: rgba(11, 14, 26, 0.14);
+  --blue: #2447ff;
+  --blue-soft: #e3e8ff;
+  --chat: #dde3f1;
+  --f-display: 'Geologica', 'Onest', system-ui, sans-serif;
+  --f-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--f-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+.wrap { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: max(16px, 4vw); }
+
+/* ---------- bilingual swap: both languages share one grid cell, so layout never moves ---------- */
+.t { display: grid; min-width: 0; }
+.t.in { display: inline-grid; }
+.t > i {
+  grid-area: 1 / 1;
+  min-width: 0;
+  font-style: normal;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.35em);
+  filter: blur(8px);
+  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(.2,.7,.2,1), filter 0.5s ease, visibility 0s linear 0.7s;
+  transition-delay: var(--d, 0s), var(--d, 0s), var(--d, 0s), calc(var(--d, 0s) + 0.7s);
+}
+:root:not([data-lang="en"]) .t > i[data-l="ru"],
+:root[data-lang="en"] .t > i[data-l="en"] {
+  opacity: 1; visibility: visible; transform: none; filter: none;
+  transition-delay: var(--d, 0s), var(--d, 0s), var(--d, 0s), 0s;
+}
+.boot .t > i { transition: none !important; }
+
+/* ---------- header ---------- */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1.4rem; }
+.logo { font: 400 1.4rem/1 var(--f-display); letter-spacing: -0.03em; text-decoration: none; }
+.logo b { font-weight: 800; }
+.logo span { color: var(--blue); font-weight: 800; }
+.lang { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); flex: none; }
+.lang button { position: relative; z-index: 1; appearance: none; background: none; border: 0; color: var(--muted); font: 600 0.8rem/1 var(--f-body); letter-spacing: 0.06em; padding: 0.6rem 1rem; min-width: 3.3rem; cursor: pointer; border-radius: 999px; transition: color 0.4s ease; }
+.lang button[aria-pressed="true"] { color: var(--white); }
+.thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--blue); transition: transform 0.6s cubic-bezier(.65,0,.2,1); }
+:root[data-lang="en"] .thumb { transform: translateX(100%); }
+
+/* ---------- hero ---------- */
+.hero .wrap { padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 7vw, 6rem); }
+.status { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.95rem 0.45rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font: 500 0.85rem/1 var(--f-body); color: var(--muted); }
+.status .dot { width: 8px; height: 8px; border-radius: 50%; background: #17b26a; box-shadow: 0 0 0 0 rgba(23, 178, 106, 0.55); animation: ping 2.4s ease-out infinite; }
+@keyframes ping { 70%, 100% { box-shadow: 0 0 0 9px rgba(23, 178, 106, 0); } }
+h1 { margin: 1.6rem 0 0; font: 800 clamp(2.1rem, 8.2vw, 7rem)/1.05 var(--f-display); letter-spacing: -0.04em; }
+h1 .ln { display: block; overflow-wrap: anywhere; }
+h1 em { font-style: normal; color: var(--ink); padding-inline: 0.12em; margin-inline: -0.12em; background: linear-gradient(var(--blue), var(--blue)) no-repeat 0 58% / 0% 84%; animation: wipe 0.95s 0.9s cubic-bezier(.7,0,.2,1) forwards; }
+@keyframes wipe { to { background-size: 100% 84%; color: var(--white); } }
+
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; margin-top: clamp(2.2rem, 5vw, 3.8rem); }
+@media (min-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3.5rem; align-items: start; } }
+.lead { font-size: clamp(1.05rem, 1.7vw, 1.28rem); line-height: 1.55; max-width: 34em; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.4rem; margin-top: 2rem; }
+.cta { display: inline-flex; align-items: center; gap: 0.8rem; padding: 1.1rem 1.7rem 1.1rem 1.9rem; border-radius: 999px; background: var(--ink); color: var(--white); font: 600 1rem/1 var(--f-body); text-decoration: none; transition: background 0.35s ease, transform 0.35s ease; }
+.cta:hover { background: var(--blue); transform: translateY(-2px); }
+.cta svg { width: 1.1rem; height: 1.1rem; transition: transform 0.35s ease; }
+.cta:hover svg { transform: translate(3px, -3px); }
+.handle { font: 500 0.95rem/1 var(--f-body); color: var(--muted); user-select: all; }
+.rise { animation: rise 0.9s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--r, 0s); }
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } }
+
+/* ---------- demo collage ---------- */
+.stage { display: grid; gap: 1.4rem; justify-items: stretch; }
+@media (min-width: 960px) {
+  .stage { display: block; position: relative; min-height: 36rem; }
+  .win { position: absolute; top: 0; left: 0; width: 80%; }
+  .phone { position: absolute; right: 0; top: 4.5rem; width: 15rem; z-index: 2; }
+  .term { position: absolute; left: 3%; bottom: 0; width: 54%; z-index: 3; }
+}
+.float { animation: float 8s ease-in-out infinite; }
+.phone.float { animation-duration: 9.5s; animation-delay: -3s; }
+.term.float { animation-duration: 7s; animation-delay: -5s; }
+@keyframes float { 50% { transform: translateY(-7px); } }
+.win, .phone, .term { box-shadow: 0 34px 60px -28px rgba(11, 14, 26, 0.45), 0 2px 0 rgba(255,255,255,.6) inset; }
+
+.win { background: var(--surface); border-radius: 14px; border: 1px solid var(--line); overflow: hidden; }
+.bar2 { display: flex; align-items: center; gap: 0.4rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); background: #eceef5; }
+.bar2 i { width: 9px; height: 9px; border-radius: 50%; background: #c9ceda; }
+.bar2 .url { margin-left: 0.8rem; flex: 1; max-width: 17rem; padding: 0.3rem 0.8rem; border-radius: 999px; background: #dfe3ed; font: 500 0.72rem/1.2 var(--f-body); color: var(--muted); }
+.view { height: 17.5rem; overflow: hidden; }
+.page { animation: scroll 15s ease-in-out infinite; }
+@keyframes scroll { 0%, 14% { transform: translateY(0); } 52%, 68% { transform: translateY(-46%); } 100% { transform: translateY(0); } }
+.nav { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.4rem; }
+.nav b { font: 800 0.95rem/1 var(--f-display); letter-spacing: -0.03em; margin-right: auto; }
+.nav span { width: 2.2rem; height: 6px; border-radius: 3px; background: #cdd2e0; }
+.hero2 { padding: 1.4rem 1.4rem 1.8rem; display: grid; gap: 0.8rem; justify-items: start; }
+.hero2 h4 { margin: 0; font: 800 clamp(1.7rem, 3.4vw, 2.5rem)/1.02 var(--f-display); letter-spacing: -0.04em; }
+.sk { height: 7px; width: 78%; border-radius: 4px; background: #d3d8e5; }
+.sk.s2 { width: 54%; }
+.btn2 { margin-top: 0.4rem; padding: 0.55rem 1.1rem; border-radius: 999px; background: var(--blue); color: var(--white); font: 600 0.8rem/1 var(--f-body); }
+.art { position: relative; height: 9rem; margin-inline: 1.4rem; border-radius: 12px; background: var(--blue-soft); overflow: hidden; }
+.art span { position: absolute; border-radius: 50%; }
+.art span:nth-child(1) { width: 8rem; height: 8rem; right: 2rem; top: 1rem; background: var(--blue); }
+.art span:nth-child(2) { width: 5rem; height: 5rem; right: 8.5rem; top: 4rem; background: var(--ink); }
+.feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; padding: 1.2rem 1.4rem; }
+.feats div { height: 5.2rem; border-radius: 10px; background: #e2e6ef; }
+.foot { height: 3.2rem; background: var(--ink); }
+
+.phone { background: var(--ink); border-radius: 2.1rem; padding: 0.5rem; }
+.screen { display: grid; grid-template-rows: auto minmax(0, 1fr); height: 25rem; border-radius: 1.65rem; background: var(--chat); overflow: hidden; }
+.chead { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 0.9rem; background: var(--surface); border-bottom: 1px solid var(--line); }
+.ava { width: 2rem; height: 2rem; border-radius: 50%; background: var(--blue); color: var(--white); display: grid; place-items: center; font: 800 0.8rem/1 var(--f-display); flex: none; }
+.cname { font: 600 0.85rem/1.2 var(--f-body); }
+.csub { font: 400 0.7rem/1.2 var(--f-body); color: var(--muted); }
+#msgs { display: flex; flex-direction: column; justify-content: flex-end; gap: 0.4rem; padding: 0.8rem; overflow: hidden; min-height: 0; }
+.b { max-width: 86%; padding: 0.5rem 0.75rem; border-radius: 15px; font: 400 0.8rem/1.4 var(--f-body); animation: pop 0.35s cubic-bezier(.2,.8,.3,1) both; }
+.b.bot { align-self: flex-start; background: var(--surface); border-bottom-left-radius: 5px; transform-origin: left bottom; }
+.b.usr { align-self: flex-end; background: var(--blue); color: var(--white); border-bottom-right-radius: 5px; transform-origin: right bottom; }
+.kb { display: flex; flex-wrap: wrap; gap: 0.35rem; align-self: flex-start; max-width: 100%; animation: pop 0.35s 0.1s cubic-bezier(.2,.8,.3,1) both; }
+.kb span { padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(36, 71, 255, 0.12); color: var(--blue); font: 600 0.72rem/1 var(--f-body); transition: background 0.3s, color 0.3s; }
+.kb span.on { background: var(--blue); color: var(--white); }
+.typing { display: inline-flex; gap: 4px; padding: 0.7rem 0.85rem; }
+.typing s { width: 6px; height: 6px; border-radius: 50%; background: #9aa3b8; animation: bob 1s ease-in-out infinite; }
+.typing s:nth-child(2) { animation-delay: 0.15s; }
+.typing s:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bob { 40% { transform: translateY(-4px); background: var(--blue); } }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(0.92); } }
+
+.term { background: var(--ink); color: #cdd4ea; border-radius: 12px; overflow: hidden; }
+.thead { display: flex; align-items: center; gap: 0.4rem; padding: 0.65rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.thead i { width: 9px; height: 9px; border-radius: 50%; background: #3a4056; }
+.thead span { margin-left: 0.6rem; font: 500 0.7rem/1 var(--f-mono); color: #8a93ad; }
+#tbody { padding: 0.9rem 1rem 1rem; min-height: 8.6rem; font: 500 0.76rem/1.75 var(--f-mono); }
+#tbody .ln2 { white-space: pre-wrap; overflow-wrap: anywhere; }
+#tbody .p { color: #8da0ff; }
+#tbody .ok { color: #6fe0a6; }
+#tbody .ln2:last-child::after { content: ""; display: inline-block; width: 0.55em; height: 1.05em; margin-left: 2px; vertical-align: -0.18em; background: #cdd4ea; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- services ---------- */
+section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+.sec-label { font: 500 0.95rem/1.3 var(--f-body); color: var(--muted); margin-bottom: 1.2rem; }
+h2 { margin: 0; font: 800 clamp(1.8rem, 5vw, 3.6rem)/1.06 var(--f-display); letter-spacing: -0.035em; max-width: 18ch; text-wrap: balance; }
+.svc { margin-top: clamp(2rem, 5vw, 3.5rem); border-top: 2px solid var(--ink); }
+.row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.6rem 2rem; padding-block: 1.7rem; border-bottom: 1px solid var(--line); }
+.row::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform 0.8s cubic-bezier(.65,0,.2,1); }
+.hd { display: flex; align-items: center; gap: 1rem; min-width: 0; }
+.row h3 { margin: 0; font: 800 clamp(2rem, 6.4vw, 4.8rem)/1 var(--f-display); letter-spacing: -0.04em; overflow-wrap: anywhere; transition: transform 0.7s cubic-bezier(.2,.7,.2,1), color 0.5s ease; }
+.row p { color: var(--muted); max-width: 30em; transition: color 0.5s ease, transform 0.7s cubic-bezier(.2,.7,.2,1); }
+@media (hover: hover) {
+  .row:hover::after { transform: scaleX(1); }
+  .row:hover h3 { transform: translateX(0.4rem); color: var(--blue); }
+  .row:hover p { color: var(--ink); transform: translateX(-0.2rem); }
+}
+@media (min-width: 820px) { .row { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: end; } }
+
+/* ---------- promise band ---------- */
+.band { background: var(--blue); color: var(--white); }
+.band h2 { max-width: 14ch; }
+.pts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 2rem; margin-top: clamp(2.2rem, 5vw, 3.6rem); }
+.pt { padding-top: 1.1rem; border-top: 2px solid rgba(255,255,255,0.5); display: grid; gap: 0.6rem; align-content: start; }
+.pt h3 { margin: 0; font: 700 1.3rem/1.2 var(--f-display); letter-spacing: -0.02em; }
+.pt p { color: #dbe2ff; max-width: 26em; }
+
+/* ---------- contact ---------- */
+.contact h2 { max-width: 12ch; }
+.mega { position: relative; isolation: isolate; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.3em 0.5em; margin-top: clamp(1.6rem, 4vw, 2.6rem); padding-bottom: 0.2em; font: 800 clamp(1.7rem, 7.6vw, 6rem)/1.05 var(--f-display); letter-spacing: -0.04em; text-decoration: none; color: var(--blue); overflow-wrap: anywhere; transition: color 0.45s ease; }
+.mega::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 0.08em; z-index: -1; border-radius: 0.04em; background: var(--ink); transition: height 0.55s cubic-bezier(.65,0,.2,1), background-color 0.55s ease; }
+.mega svg { width: 0.7em; height: 0.7em; flex: none; transition: transform 0.55s cubic-bezier(.65,0,.2,1); }
+.mega:hover { color: var(--ink); }
+.mega:hover::before { height: 100%; background-color: var(--blue-soft); }
+.mega:hover svg { transform: translate(0.12em, -0.12em); }
+.contact .lead { margin-top: 1.6rem; }
+
+footer { border-top: 1px solid var(--line); padding-block: 1.8rem 2.6rem; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.8rem 2rem; font-size: 0.9rem; color: var(--muted); }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--blue); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise, .float, .page, .status .dot, .typing s { animation: none !important; }
+  h1 em { animation: none; background-size: 100% 84%; color: var(--white); }
+  .t > i, .thumb, .cta, .row::after, .row h3, .row p, .mega, .mega::before { transition-duration: 0.01s !important; transition-delay: 0s !important; }
+  .b, .kb { animation: none; }
+}
+</style>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#top" aria-label="MyFolio"><span style="color:inherit;font-weight:400">My</span><b>Folio</b><span>.</span></a>
+    <div class="lang" role="group" aria-label="Язык / Language">
+      <span class="thumb" aria-hidden="true"></span>
+      <button type="button" data-set="ru" aria-pressed="true">RU</button>
+      <button type="button" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <p class="status rise" style="--r:.05s"><span class="dot"></span><span class="t in"><i data-l="ru">Открыт для новых проектов</i><i data-l="en">Open for new projects</i></span></p>
+      <h1 class="t rise" style="--r:.15s">
+        <i data-l="ru"><span class="ln">Я начинаю и</span><span class="ln"><em>НЕ</em> сдаюсь.</span></i>
+        <i data-l="en"><span class="ln">I start and</span><span class="ln">I <em>DON'T</em> give up.</span></i>
+      </h1>
+
+      <div class="hero-grid">
+        <div class="copy rise" style="--r:.35s">
+          <p class="lead t">
+            <i data-l="ru">Я делаю сайты, Telegram-ботов и скрипты. Если вам нужен исполнитель, который аккуратно сделает работу и доведёт её до конца, напишите мне.</i>
+            <i data-l="en">I build websites, Telegram bots and scripts. If you need someone who does careful work and sees it through to the end, message me.</i>
+          </p>
+          <div class="actions">
+            <a class="cta" href="https://t.me/webdesignersjun" target="_blank" rel="noopener">
+              <span class="t in"><i data-l="ru">Написать мне в Telegram</i><i data-l="en">Message me on Telegram</i></span>
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15L15 5M7 5h8v8"/></svg>
+            </a>
+            <span class="handle">@webdesignersjun</span>
+          </div>
+        </div>
+
+        <div class="stage rise" style="--r:.55s" aria-hidden="true">
+          <div class="win float">
+            <div class="bar2"><i></i><i></i><i></i><span class="url">yourbrand.com</span></div>
+            <div class="view"><div class="page">
+              <div class="nav"><b>yourbrand</b><span></span><span></span><span></span></div>
+              <div class="hero2">
+                <h4 class="t"><i data-l="ru">Ваш бренд<br>в сети</i><i data-l="en">Your brand,<br>online</i></h4>
+                <div class="sk"></div><div class="sk s2"></div>
+                <span class="btn2 t in"><i data-l="ru">Связаться</i><i data-l="en">Contact</i></span>
+              </div>
+              <div class="art"><span></span><span></span></div>
+              <div class="feats"><div></div><div></div><div></div></div>
+              <div class="foot"></div>
+            </div></div>
+          </div>
+
+          <div class="phone float">
+            <div class="screen">
+              <div class="chead"><span class="ava">B</span><div><div class="cname">your_bot</div><div class="csub">bot</div></div></div>
+              <div id="msgs"></div>
+            </div>
+          </div>
+
+          <div class="term float">
+            <div class="thead"><i></i><i></i><i></i><span>parse_orders.py</span></div>
+            <div id="tbody"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <p class="sec-label t"><i data-l="ru">Чем я занимаюсь</i><i data-l="en">What I do</i></p>
+      <h2 class="t"><i data-l="ru">Три вещи, которые я делаю хорошо.</i><i data-l="en">Three things I do well.</i></h2>
+      <div class="svc">
+        <div class="row">
+          <div class="hd"><h3 class="t"><i data-l="ru">Сайты</i><i data-l="en">Websites</i></h3></div>
+          <p class="t"><i data-l="ru">Лендинги, сайты-визитки и страницы для бизнеса. Современный дизайн, быстрая загрузка, удобно на телефоне.</i><i data-l="en">Landing pages, business sites and web pages. Modern design, fast loading, comfortable on a phone.</i></p>
+        </div>
+        <div class="row">
+          <div class="hd"><h3 class="t"><i data-l="ru">Telegram-боты</i><i data-l="en">Telegram bots</i></h3></div>
+          <p class="t"><i data-l="ru">Приём заявок, каталоги, ответы на вопросы и уведомления. Бот, который понятен людям и надёжно работает.</i><i data-l="en">Taking requests, catalogs, answers to questions and notifications. A bot that people understand and that runs reliably.</i></p>
+        </div>
+        <div class="row">
+          <div class="hd"><h3 class="t"><i data-l="ru">Скрипты</i><i data-l="en">Scripts</i></h3></div>
+          <p class="t"><i data-l="ru">Парсинг, рассылки, отчёты, связка сервисов между собой. Всё, что не стоит делать руками.</i><i data-l="en">Parsing, mailings, reports, connecting services to each other. Anything you shouldn't do by hand.</i></p>
+        </div>
+        <div class="row">
+          <div class="hd"><h3 class="t"><i data-l="ru">Другое</i><i data-l="en">Something else</i></h3></div>
+          <p class="t"><i data-l="ru">Не нашли свою задачу в списке? Опишите её, и я скажу, как её решить.</i><i data-l="en">Don't see your task here? Describe it and I'll tell you how to solve it.</i></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 class="t"><i data-l="ru">Я вас не подведу.</i><i data-l="en">I won't let you down.</i></h2>
+      <div class="pts">
+        <div class="pt">
+          <h3 class="t"><i data-l="ru">Продуманный дизайн</i><i data-l="en">Considered design</i></h3>
+          <p class="t"><i data-l="ru">Аккуратная типографика, чистая сетка, удобство на телефоне и на компьютере.</i><i data-l="en">Careful typography, a clean grid, comfortable on phone and desktop.</i></p>
+        </div>
+        <div class="pt">
+          <h3 class="t"><i data-l="ru">Надёжная работа</i><i data-l="en">Work that holds up</i></h3>
+          <p class="t"><i data-l="ru">Проверяю всё перед сдачей: ссылки, кнопки, сценарии бота, нестандартные случаи.</i><i data-l="en">I check everything before handing it over: links, buttons, bot flows, edge cases.</i></p>
+        </div>
+        <div class="pt">
+          <h3 class="t"><i data-l="ru">Всегда на связи</i><i data-l="en">Always in touch</i></h3>
+          <p class="t"><i data-l="ru">Отвечаю в Telegram, показываю результат по ходу работы и довожу до конца.</i><i data-l="en">I reply on Telegram, show progress as I go and see it through.</i></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <p class="sec-label t"><i data-l="ru">Связаться</i><i data-l="en">Get in touch</i></p>
+      <h2 class="t"><i data-l="ru">Есть задача? Напишите мне.</i><i data-l="en">Got a task? Message me.</i></h2>
+      <a class="mega" href="https://t.me/webdesignersjun" target="_blank" rel="noopener">
+        <span id="handle">@webdesignersjun</span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 15L15 5M7 5h8v8"/></svg>
+      </a>
+      <p class="lead t"><i data-l="ru">Опишите, что нужно. Я отвечу в Telegram и предложу, как это сделать.</i><i data-l="en">Tell me what you need. I'll reply on Telegram and suggest how to do it.</i></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><b>MyFolio</b> · <span class="t in"><i data-l="ru">Я начинаю и не сдаюсь</i><i data-l="en">I start and I don't give up</i></span></span>
+    <a href="https://t.me/webdesignersjun" target="_blank" rel="noopener">t.me/webdesignersjun</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.lang button'));
+  var lang = 'ru', running = false;
+
+  Array.prototype.slice.call(document.querySelectorAll('.t')).forEach(function (el, i) {
+    el.style.setProperty('--d', Math.min(i * 0.02, 0.5).toFixed(2) + 's');
+  });
+
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setLang(l, save) {
+    lang = l;
+    root.setAttribute('data-lang', l);
+    root.setAttribute('lang', l);
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set') === l)); });
+    if (save) { try { localStorage.setItem('lang', l); } catch (e) {} }
+    if (typeof startChat === 'function' && (running || reduce)) startChat();
+  }
+
+  var start = 'ru';
+  try { var s = localStorage.getItem('lang'); if (s === 'en' || s === 'ru') start = s; } catch (e) {}
+  root.className += ' boot';
+  lang = start;
+  root.setAttribute('data-lang', start); root.setAttribute('lang', start);
+  btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set') === start)); });
+  requestAnimationFrame(function () { requestAnimationFrame(function () { root.className = root.className.replace(' boot', ''); }); });
+  btns.forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-set'), true); }); });
+
+  // ---------- demo: Telegram bot chat ----------
+  var CHAT = {
+    ru: [
+      { who: 'u', text: '/start' },
+      { who: 'b', text: 'Привет! Я бот-помощник. Чем могу помочь?', kb: ['Каталог', 'Оформить заказ', 'Связаться'] },
+      { who: 'u', text: 'Оформить заказ', pick: 1 },
+      { who: 'b', text: 'Отлично! Как вас зовут?' },
+      { who: 'u', text: 'Анна' },
+      { who: 'b', text: 'Заявка принята ✓ Скоро с вами свяжутся.' }
+    ],
+    en: [
+      { who: 'u', text: '/start' },
+      { who: 'b', text: "Hi! I'm a helper bot. How can I help?", kb: ['Catalog', 'Place an order', 'Contact'] },
+      { who: 'u', text: 'Place an order', pick: 1 },
+      { who: 'b', text: "Great! What's your name?" },
+      { who: 'u', text: 'Anna' },
+      { who: 'b', text: "Request received ✓ We'll be in touch soon." }
+    ]
+  };
+  var msgs = document.getElementById('msgs'), cs = 0;
+
+  function later(my, fn, ms) { setTimeout(function () { if (my === cs && (running || reduce)) fn(); }, ms); }
+  function bubble(m) {
+    if (m.who === 'u' && m.pick !== undefined) {
+      var kbs = msgs.querySelectorAll('.kb'); var kb = kbs[kbs.length - 1];
+      if (kb && kb.children[m.pick]) kb.children[m.pick].className = 'on';
+    }
+    var d = document.createElement('div');
+    d.className = 'b ' + (m.who === 'u' ? 'usr' : 'bot');
+    d.textContent = m.text;
+    msgs.appendChild(d);
+    if (m.kb) {
+      var k = document.createElement('div'); k.className = 'kb';
+      m.kb.forEach(function (t) { var s = document.createElement('span'); s.textContent = t; k.appendChild(s); });
+      msgs.appendChild(k);
+    }
+  }
+  function startChat() {
+    var my = ++cs, script = CHAT[lang] || CHAT.ru, i = 0;
+    msgs.innerHTML = '';
+    if (reduce) { script.forEach(bubble); return; }
+    function next() {
+      if (my !== cs) return;
+      if (i >= script.length) { later(my, startChat, 4200); return; }
+      var m = script[i++];
+      if (m.who === 'b') {
+        var t = document.createElement('div'); t.className = 'b bot typing'; t.innerHTML = '<s></s><s></s><s></s>'; msgs.appendChild(t);
+        later(my, function () { t.remove(); bubble(m); later(my, next, m.kb ? 1700 : 900); }, 1000);
+      } else {
+        later(my, function () { bubble(m); later(my, next, 700); }, 600);
+      }
+    }
+    next();
+  }
+
+  // ---------- demo: script terminal ----------
+  var LINES = [
+    { t: '$ python parse_orders.py', c: 'p' },
+    { t: 'reading orders.csv ... ok' },
+    { t: 'cleaning 248 rows ... ok' },
+    { t: 'building report.xlsx ... ok' },
+    { t: '✓ done in 1.4s', c: 'ok' }
+  ];
+  var tbody = document.getElementById('tbody'), ts = 0;
+  function startTerm() {
+    var my = ++ts, li = 0;
+    tbody.innerHTML = '';
+    if (reduce) { LINES.forEach(function (L) { var e = document.createElement('div'); e.className = 'ln2 ' + (L.c || ''); e.textContent = L.t; tbody.appendChild(e); }); return; }
+    function line() {
+      if (my !== ts) return;
+      if (li >= LINES.length) { setTimeout(function () { if (my === ts && running) startTerm(); }, 3400); return; }
+      var L = LINES[li++], el = document.createElement('div'), ci = 0;
+      el.className = 'ln2 ' + (L.c || ''); tbody.appendChild(el);
+      (function ch() {
+        if (my !== ts) return;
+        el.textContent = L.t.slice(0, ++ci);
+        if (ci < L.t.length) setTimeout(ch, L.c === 'p' ? 45 : 18); else setTimeout(line, 450);
+      })();
+    }
+    line();
+  }
+
+  function play() { if (running) return; running = true; startChat(); startTerm(); }
+  function pause() { running = false; cs++; ts++; }
+
+  if (reduce) { startChat(); startTerm(); }
+  else if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) { e[0].isIntersecting ? play() : pause(); }, { threshold: 0.1 }).observe(document.querySelector('.stage'));
+  } else { play(); }
+})();
+</script>
